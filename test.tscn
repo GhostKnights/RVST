@@ -1,27 +1,7 @@
 [gd_scene format=3 uid="uid://dt2we2kj368lp"]
 
 [ext_resource type="Script" uid="uid://s7c637a5mfrb" path="res://test.gd" id="1_37kl0"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_37kl0"]
-albedo_color = Color(0.09956529, 0.4562707, 0.8232469, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_8uh7m"]
-material = SubResource("StandardMaterial3D_37kl0")
-size = Vector3(1, 0.1, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6uqi0"]
-albedo_color = Color(0.21410677, 0.5356861, 0.25161445, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_ppyta"]
-material = SubResource("StandardMaterial3D_6uqi0")
-size = Vector3(1, 0.2, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ykrsh"]
-albedo_color = Color(0.6363885, 0.39083418, 0.16090631, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_din1b"]
-material = SubResource("StandardMaterial3D_ykrsh")
-size = Vector3(1, 0.7, 1)
+[ext_resource type="Script" uid="uid://c7vhpk5vni7ev" path="res://TerrainRenderer.gd" id="2_8uh7m"]
 
 [node name="Node3D" type="Node3D" unique_id=1562624692]
 script = ExtResource("1_37kl0")
@@ -31,16 +11,8 @@ transform = Transform3D(0.70710677, 0.4545237, -0.5416717, 0, 0.76603943, 0.6427
 projection = 1
 size = 15.0
 
-[node name="Water" type="MeshInstance3D" parent="." unique_id=1692532356]
-mesh = SubResource("BoxMesh_8uh7m")
-
-[node name="Flat" type="MeshInstance3D" parent="." unique_id=1985333926]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
-mesh = SubResource("BoxMesh_ppyta")
-
-[node name="Hill" type="MeshInstance3D" parent="." unique_id=53392905]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
-mesh = SubResource("BoxMesh_din1b")
-
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1672158897]
 transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)
+
+[node name="TerrainRenderer" type="Node3D" parent="." unique_id=1665313169]
+script = ExtResource("2_8uh7m")

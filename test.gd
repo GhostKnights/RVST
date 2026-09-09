@@ -12,3 +12,10 @@ func _ready() -> void:
 	print("turtle-water solid    = ", ConfigManager.is_solid("turtle", "water"))
 	print("rabbit-water solid    = ", ConfigManager.is_solid("rabbit", "water"))
 	print("turtle-highland solid = ", ConfigManager.is_solid("turtle", "highland"))
+	
+	var gd = GridData.new()
+	gd.set_terrain(Vector2i(0,0),"water")
+	gd.set_terrain(Vector2i(0,1),"highland")
+	gd.set_terrain(Vector2i(0,2),"downhill")
+	$TerrainRenderer.grid_data  = gd
+	$TerrainRenderer.build()

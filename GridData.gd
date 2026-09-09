@@ -1,3 +1,4 @@
+class_name GridData
 extends RefCounted
 
 var grid_board: Dictionary[Vector2i, String] = {}
