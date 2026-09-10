@@ -1,7 +1,7 @@
 extends Node3D
 
 func _ready() -> void:
-	print("=== 代价查询（期望: 1.0 / 100.0 / 100.0 / 1.0 / 0.6 / 2.0）===")
+	print("=== 代价查询（期望: 1.0 / 100.0 / 100.0 / 1.0 / 0.6 / 0.8）===")
 	print("turtle-water     = ", ConfigManager.get_cost("turtle", "water"))
 	print("rabbit-water     = ", ConfigManager.get_cost("rabbit", "water"))
 	print("turtle-highland  = ", ConfigManager.get_cost("turtle", "highland"))
@@ -14,8 +14,8 @@ func _ready() -> void:
 	print("turtle-highland solid = ", ConfigManager.is_solid("turtle", "highland"))
 	
 	var gd = GridData.new()
-	gd.set_terrain(Vector2i(0,0),"water")
-	gd.set_terrain(Vector2i(0,1),"highland")
-	gd.set_terrain(Vector2i(0,2),"downhill")
+	var gen = TrackGenerator.new()
+	gen.grid_data = gd
+	gen.generate()
 	$TerrainRenderer.grid_data  = gd
 	$TerrainRenderer.build()
