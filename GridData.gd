@@ -19,3 +19,5 @@ func set_terrain(cell: Vector2i,terrain: String) ->void:
 func get_terrain(cell: Vector2i,default: String = "flat") -> String:
 	return grid_board.get(cell, default)
 	
+func erase_terrain(cell: Vector2i) -> void:
+	grid_board.erase(cell)

@@ -4,7 +4,9 @@ turtle,water,1,0
 turtle,highland,100,1
 turtle,downhill,0.5,0
 turtle,flat,1,0
+turtle,uphill,1,0
 rabbit,water,100,1
 rabbit,highland,1,0
 rabbit,downhill,0.8,0
 rabbit,flat,1,0
+rabbit,uphill,1,0
