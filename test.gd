@@ -16,6 +16,17 @@ func _ready() -> void:
 	var gd = GridData.new()
 	var gen = TrackGenerator.new()
 	gen.grid_data = gd
+	gen.set_seed(123)
 	gen.generate()
 	$TerrainRenderer.grid_data  = gd
 	$TerrainRenderer.build()
+	
+	var all_pass := true
+	for s in range(20):
+		gen.set_seed(s)
+		gen.generate()          # 每次 generate 内部都会 is_reachable
+		var ok = gen.is_reachable()
+		print("seed ", s, " -> ", ok)
+		if not ok:
+			all_pass = false
+	print("=== 20 种子全部可达: ", all_pass, " ===")

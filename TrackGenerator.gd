@@ -30,7 +30,15 @@ var center_rows: Array[int] = []
 ## 记录每一格是否到达
 var check_reachable: Dictionary[Vector2i,bool] = {} 
 
+var seed_value: int = 0
+
+func set_seed(s: int) -> void:
+	seed_value = s
+
 func generate() -> void:
+	seed(seed_value)   # ← generate 开头先播种子
+	
+	
 	# ---- 第一步：先生成整条赛道的地形序列（每列一个地形）----
 	# 地形由转移表 + 段长决定；起点从 flat 开始（第一段必是 flat = 起点安全区）
 	var terrains: Array[String] = []
