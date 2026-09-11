@@ -27,6 +27,9 @@ var current_row: int
 ## 记录每一列的中心行（蜿蜒路径的骨架）
 var center_rows: Array[int] = []
 
+## 记录每一格是否到达
+var check_reachable: Dictionary[Vector2i,bool] = {} 
+
 func generate() -> void:
 	# ---- 第一步：先生成整条赛道的地形序列（每列一个地形）----
 	# 地形由转移表 + 段长决定；起点从 flat 开始（第一段必是 flat = 起点安全区）
@@ -62,3 +65,26 @@ func generate() -> void:
 		if col < 19:
 			if TERRAIN_HEIGHT[terrains[col]] == TERRAIN_HEIGHT[terrains[col + 1]]:
 				current_row = clampi(current_row + randi_range(-1, 1), 1, 10)
+	
+	print(is_reachable())
+				
+func is_reachable() -> bool:
+	check_reachable.clear()
+	current_row = 6 
+	flood_fill(0, current_row)			
+	return check_reachable.has(Vector2i(19,center_rows[19]))
+	
+func flood_fill(col :int, row : int) -> void:
+	if not(col < 0 or col >= 20 or row < 0 or row >= 12):
+		if grid_data.grid_board.has(Vector2i(col, row-1)) and not check_reachable.has(Vector2i(col, row-1)):
+			check_reachable.set(Vector2i(col,row-1),true)
+			flood_fill(col, row-1)
+		if grid_data.grid_board.has(Vector2i(col, row+1)) and not check_reachable.has(Vector2i(col, row+1)):
+			check_reachable.set(Vector2i(col,row+1),true)
+			flood_fill(col, row+1)
+		if grid_data.grid_board.has(Vector2i(col-1, row)) and not check_reachable.has(Vector2i(col-1, row)):
+			check_reachable.set(Vector2i(col-1,row),true)
+			flood_fill(col-1, row)
+		if grid_data.grid_board.has(Vector2i(col+1, row)) and not check_reachable.has(Vector2i(col+1, row)):
+			check_reachable.set(Vector2i(col+1,row),true)
+			flood_fill(col+1, row)
