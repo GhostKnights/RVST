@@ -16,7 +16,7 @@ func _ready() -> void:
 	var gd = GridData.new()
 	var gen = TrackGenerator.new()
 	gen.grid_data = gd
-	gen.set_seed(123)
+	gen.set_seed(3)
 	if gen.generate_valid(["turtle", "rabbit"]):
 		gen.generate()
 		$TerrainRenderer.grid_data  = gd
@@ -50,6 +50,32 @@ func _ready() -> void:
 	print("兔子路径地形: ", terrains_rabbit)
 	
 	print("result is ", gen.generate_valid(["turtle", "rabbit"]))
+	
+	var vis := PathRenderer.new()
+	add_child(vis)
+	vis.grid_data = gd
+	vis.draw_path(path_turtle, Color(0.2, 0.4, 1.0))   # 蓝
+	vis.draw_path(path_rabbit, Color(1.0, 0.3, 0.3))   # 红
+	
+	print_path_summary("rabbit", path_rabbit, gd)
+	print_path_summary("turtle", path_turtle, gd)
+	
+	# 比如：乌龟走兔子路径的代价
+	var cross_cost := 0.0
+	for cell in path_rabbit:
+		cross_cost += ConfigManager.get_cost("turtle", gd.get_terrain(cell))
+	print("乌龟走兔子路: ", snapped(cross_cost, 0.01))
+	
+	for cell in path_turtle:
+		cross_cost += ConfigManager.get_cost("rabbit", gd.get_terrain(cell))
+	print("兔子走乌龟路: ", snapped(cross_cost, 0.01))
+	
+func print_path_summary(role: String, path: Array[Vector2i], gd: GridData) -> void:
+	var total := 0.0
+	for cell in path:
+		total += ConfigManager.get_cost(role, gd.get_terrain(cell))
+	print(role, " | 格数: ", path.size(), " | 总代价: ", snapped(total, 0.01))
+	
 	
 	#测试路径连通性
 	#var all_pass := true

@@ -8,8 +8,8 @@ const TERRAIN_VISUAL := {
 	"water":    {"color": Color(0.42, 0.71, 0.91), "height": 0.2, "mesh": "box"},
 	"flat":     {"color": Color(0.42, 0.68, 0.31), "height": 0.2, "mesh": "box"},
 	"highland": {"color": Color(0.64, 0.45, 0.24), "height": 1.2, "mesh": "box"},
-	"downhill": {"color": Color(0.91, 0.62, 0.35), "height": 0.7, "mesh": "prism","left_to_right": true},
-	"uphill":	{"color":Color(1,1,0), "height":0.7,"mesh": "prism","left_to_right": false}
+	"downhill": {"color": Color(0.91, 0.62, 0.35), "height": 1.2, "mesh": "prism","left_to_right": true},
+	"uphill":	{"color":Color(1,1,0), "height":0.2,"mesh": "prism","left_to_right": false}
 }
 
 ## 入口：遍历所有格子，逐个生成方块
