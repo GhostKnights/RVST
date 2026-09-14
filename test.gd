@@ -18,7 +18,6 @@ func _ready() -> void:
 	gen.grid_data = gd
 	gen.set_seed(3)
 	if gen.generate_valid(["turtle", "rabbit"]):
-		gen.generate()
 		$TerrainRenderer.grid_data  = gd
 		$TerrainRenderer.build()
 	
@@ -49,8 +48,7 @@ func _ready() -> void:
 		terrains_rabbit.append(gd.get_terrain(cell))
 	print("兔子路径地形: ", terrains_rabbit)
 	
-	print("result is ", gen.generate_valid(["turtle", "rabbit"]))
-	
+
 	var vis := PathRenderer.new()
 	add_child(vis)
 	vis.grid_data = gd
@@ -61,14 +59,23 @@ func _ready() -> void:
 	print_path_summary("turtle", path_turtle, gd)
 	
 	# 比如：乌龟走兔子路径的代价
-	var cross_cost := 0.0
+	var cross_cost_turtle := 0.0
 	for cell in path_rabbit:
-		cross_cost += ConfigManager.get_cost("turtle", gd.get_terrain(cell))
-	print("乌龟走兔子路: ", snapped(cross_cost, 0.01))
+		cross_cost_turtle += ConfigManager.get_cost("turtle", gd.get_terrain(cell))
+	print("乌龟走兔子路: ", snapped(cross_cost_turtle, 0.01))
 	
+	# 比如：兔子走乌龟路径的代价
+	var cross_cost_rabbit := 0.0
 	for cell in path_turtle:
-		cross_cost += ConfigManager.get_cost("rabbit", gd.get_terrain(cell))
-	print("兔子走乌龟路: ", snapped(cross_cost, 0.01))
+		cross_cost_rabbit += ConfigManager.get_cost("rabbit", gd.get_terrain(cell))
+	print("兔子走乌龟路: ", snapped(cross_cost_rabbit, 0.01))
+	
+	#生成兔子和乌龟角色racer移动
+	var rabbit = Racer.new(gd, "rabbit", path_rabbit)
+	add_child(rabbit)
+	var turtle = Racer.new(gd, "turtle", path_turtle)
+	add_child(turtle)
+	
 	
 func print_path_summary(role: String, path: Array[Vector2i], gd: GridData) -> void:
 	var total := 0.0
