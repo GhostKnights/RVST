@@ -18,5 +18,7 @@ func draw_path(path: Array[Vector2i], color: Color) -> void:
 	
 	for cell in path:
 		var wp: Vector3 = grid_data.cell_to_world(cell)
-		im.surface_add_vertex(wp + Vector3(0, 0.5, 0))   # 抬高 0.5，避免线埋进地里
+		# 高度按地形剖面取（坡中点/平台顶面），再略抬高避免埋进地里
+		wp.y = grid_data.height_at(cell, 0.5) + 0.3
+		im.surface_add_vertex(wp)
 	im.surface_end()

@@ -16,7 +16,7 @@ func _ready() -> void:
 	var gd = GridData.new()
 	var gen = TrackGenerator.new()
 	gen.grid_data = gd
-	gen.set_seed(3)
+	gen.set_seed(9999)
 	if gen.generate_valid(["turtle", "rabbit"]):
 		$TerrainRenderer.grid_data  = gd
 		$TerrainRenderer.build()

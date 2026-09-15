@@ -11,15 +11,9 @@ const TERRAIN_TRANSITIONS = {
 	"uphill": ["highland"],
 }
 
-## 地形高度分组（决定中心行能否错位）：
-## 前后地形高度差为 0 -> 允许蜿蜒错位；高度差不为 0 -> 正对链接
-const TERRAIN_HEIGHT = {
-	"flat": 0,
-	"water": 0,
-	"uphill": 1,
-	"downhill": 1,
-	"highland": 2,
-}
+## 地形高度统一在 GridData.TERRAIN_PROFILE（入口/出口高度）：
+## 中心行能否错位 = 前后地形高度连续（A 的出口 == B 的入口），
+## 平台间（flat/water 等高）与"坡接平台"均满足，正对链接仅发生在高度跳变时。
 
 var grid_data: GridData
 var current_row: int
@@ -38,6 +32,7 @@ func set_seed(s: int) -> void:
 func generate() -> void:
 	seed(seed_value)   # ← generate 开头先播种子
 	grid_data.grid_board.clear()   # ← 每次生成先清空
+	grid_data.clear_channel_heights()   # ← 通道高度记录同步清空
 	center_rows.clear()            # ← 同上
 	
 	
@@ -87,15 +82,24 @@ func generate() -> void:
 			channel_offset = clampi(channel_offset + randi_range(-1, 1), -2, 1)
 
 		# ③ 铺 5 行：通道行铺通道地形，其余铺主地形
+		# 方案 B：通道格子记录"恒定顶面高度 = 段主地形顶面高度"（highland 段 = 1，water 段 = 0）
+		# → 角色在通道上高度与主地形一致，进出通道不再跳变
 		for d in range(-2, 3):
 			var t := main_t
 			if channel_terrain != "" and (d == channel_offset or d == channel_offset + 1):
 				t = channel_terrain
+				grid_data.set_channel_height(
+					Vector2i(col, current_row + d),
+					GridData.TERRAIN_PROFILE[main_t]["entry"]
+				)
 			grid_data.set_terrain(Vector2i(col, current_row + d), t)
 
 		# ④ 中心行蜿蜒（范围改为 2..9，保证 ±2 不越界）
+		# 错位条件：前后地形高度连续（前一列出口 == 后一列入口），否则正对链接
 		if col < 19:
-			if TERRAIN_HEIGHT[terrains[col]] == TERRAIN_HEIGHT[terrains[col + 1]]:
+			var prev_exit: float = GridData.TERRAIN_PROFILE[terrains[col]]["exit"]
+			var next_entry: float = GridData.TERRAIN_PROFILE[terrains[col + 1]]["entry"]
+			if prev_exit == next_entry:
 				current_row = clampi(current_row + randi_range(-1, 1), 2, 9)
 	
 				
