@@ -1,7 +1,12 @@
 [gd_scene format=3 uid="uid://dt2we2kj368lp"]
 
 [ext_resource type="Script" uid="uid://s7c637a5mfrb" path="res://test.gd" id="1_37kl0"]
+[ext_resource type="PackedScene" uid="uid://dj044w1mol8xn" path="res://UI.tscn" id="2_6uqi0"]
 [ext_resource type="Script" uid="uid://c7vhpk5vni7ev" path="res://TerrainRenderer.gd" id="2_8uh7m"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_6uqi0"]
+font_size = 48
+font_color = Color(1, 0.08627451, 0.015686275, 1)
 
 [node name="Node3D" type="Node3D" unique_id=1562624692]
 script = ExtResource("1_37kl0")
@@ -16,3 +21,21 @@ transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.707
 
 [node name="TerrainRenderer" type="Node3D" parent="." unique_id=1665313169]
 script = ExtResource("2_8uh7m")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1380956144]
+
+[node name="UI" parent="CanvasLayer" unique_id=163075882 instance=ExtResource("2_6uqi0")]
+
+[node name="ResultLabel" type="Label" parent="CanvasLayer" unique_id=554629652]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+label_settings = SubResource("LabelSettings_6uqi0")

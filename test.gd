@@ -1,6 +1,51 @@
 extends Node3D
+enum Stage { SELECTING, RACING, FINISHED }
+var stage :Stage = Stage.SELECTING
+var player_role := ""	#玩家选的角色（乌龟/兔子），结算要用
+var turtle_racer: Racer
+var rabbit_racer: Racer
 
 func _ready() -> void:
+	# 连按钮信号
+	$CanvasLayer/UI/CenterContainer/PanelContainer/VBoxContainer/HBoxContainer/Button_Turtle.pressed.connect(_on_turtle_pressed)
+	$CanvasLayer/UI/CenterContainer/PanelContainer/VBoxContainer/HBoxContainer/Button_Rabbit.pressed.connect(_on_rabbit_pressed)
+
+func _process(delta: float) -> void:
+	if stage == Stage.RACING and turtle_racer.finished and rabbit_racer.finished:
+		_settle()
+
+func _settle() -> void:
+	stage = Stage.FINISHED
+	var msg :String = ""
+
+	if absf(turtle_racer.finish_time - rabbit_racer.finish_time) < 0.001:
+			msg = "平局！"
+	elif turtle_racer.finish_time < rabbit_racer.finish_time:
+		msg = "乌龟获胜！用时 %s 秒" % snapped(turtle_racer.finish_time, 0.01)
+	else:
+		msg = "兔子获胜！用时 %s 秒" % snapped(rabbit_racer.finish_time, 0.01)
+		
+	# 玩家所选角色是否赢了（player_role 正好用上）
+	if msg != "平局！":
+		var winner := "turtle" if turtle_racer.finish_time < rabbit_racer.finish_time else "rabbit"
+		msg += "\n你选的角色" + ("获胜！" if winner == player_role else "惜败。")
+
+	$CanvasLayer/ResultLabel.text = msg
+	$CanvasLayer/ResultLabel.visible = true
+
+func _on_turtle_pressed() -> void:
+	_start_race("turtle")
+
+func _on_rabbit_pressed() -> void:
+	_start_race("rabbit")
+	
+func _start_race(role: String) -> void:
+	if stage != Stage.SELECTING:
+		return                     # 防重复点击
+	player_role = role
+	$CanvasLayer/UI.visible = false           # 隐藏选角 UI
+	stage = Stage.RACING
+	
 	print("=== 代价查询（期望: 1.0 / 100.0 / 100.0 / 1.0 / 0.6 / 0.8）===")
 	print("turtle-water     = ", ConfigManager.get_cost("turtle", "water"))
 	print("rabbit-water     = ", ConfigManager.get_cost("rabbit", "water"))
@@ -16,7 +61,7 @@ func _ready() -> void:
 	var gd = GridData.new()
 	var gen = TrackGenerator.new()
 	gen.grid_data = gd
-	gen.set_seed(9999)
+	gen.set_seed(198211)
 	if gen.generate_valid(["turtle", "rabbit"]):
 		$TerrainRenderer.grid_data  = gd
 		$TerrainRenderer.build()
@@ -71,12 +116,11 @@ func _ready() -> void:
 	print("兔子走乌龟路: ", snapped(cross_cost_rabbit, 0.01))
 	
 	#生成兔子和乌龟角色racer移动
-	var rabbit = Racer.new(gd, "rabbit", path_rabbit)
-	add_child(rabbit)
-	var turtle = Racer.new(gd, "turtle", path_turtle)
-	add_child(turtle)
-	
-	
+	rabbit_racer = Racer.new(gd, "rabbit", path_rabbit)
+	add_child(rabbit_racer)
+	turtle_racer = Racer.new(gd, "turtle", path_turtle)
+	add_child(turtle_racer)
+
 func print_path_summary(role: String, path: Array[Vector2i], gd: GridData) -> void:
 	var total := 0.0
 	for cell in path:
