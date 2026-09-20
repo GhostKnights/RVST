@@ -1,0 +1,102 @@
+[gd_scene format=3 uid="uid://dj044w1mol8xn"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xi2mn"]
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="LabelSettings" id="LabelSettings_wusub"]
+font_size = 40
+font_color = Color(0.10805505, 0.014000568, 0.025206827, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_b3bc3"]
+font_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0mc3e"]
+bg_color = Color(0.31764707, 0.31764707, 0.31764707, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2n5f6"]
+bg_color = Color(0.31764707, 0.31764707, 0.31764707, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="LabelSettings" id="LabelSettings_3b2b5"]
+font_size = 14
+
+[node name="UI" type="Control" unique_id=163075882]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1746251698]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -525.0
+offset_top = -292.0
+offset_right = 525.0
+offset_bottom = 292.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=46314153]
+custom_minimum_size = Vector2(560, 480)
+custom_maximum_size = Vector2(560, 480)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xi2mn")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer" unique_id=1787001911]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/VBoxContainer" unique_id=1807045553]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "龟兔赛跑"
+label_settings = SubResource("LabelSettings_wusub")
+
+[node name="Label2" type="Label" parent="CenterContainer/PanelContainer/VBoxContainer" unique_id=1033052502]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "请选择你的角色"
+label_settings = SubResource("LabelSettings_b3bc3")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/VBoxContainer" unique_id=1712501122]
+layout_mode = 2
+theme_override_constants/separation = 120
+
+[node name="Button_Turtle" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=325022656]
+custom_minimum_size = Vector2(220, 110)
+custom_maximum_size = Vector2(220, 110)
+layout_mode = 2
+offset_transform_enabled = true
+theme_override_styles/normal = SubResource("StyleBoxFlat_0mc3e")
+text = "乌龟
+下坡更快，可走水路"
+
+[node name="Button_Rabbit" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=400320909]
+custom_minimum_size = Vector2(220, 110)
+custom_maximum_size = Vector2(220, 110)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_2n5f6")
+text = "兔子
+平地，上坡更快，禁水"
+
+[node name="Label3" type="Label" parent="CenterContainer/PanelContainer/VBoxContainer" unique_id=1094551240]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "选择后将自动生成赛道并开始观赛"
+label_settings = SubResource("LabelSettings_3b2b5")
