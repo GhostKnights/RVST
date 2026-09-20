@@ -11,7 +11,8 @@ const TERRAIN_VISUAL := {
 	"flat":     {"color": Color(0.42, 0.68, 0.31), "height": 0, "mesh": "box"},
 	"highland": {"color": Color(0.64, 0.45, 0.24), "height": 1, "mesh": "box"},
 	"downhill": {"color": Color(0.91, 0.62, 0.35), "height": 1, "mesh": "prism","left_to_right": true},
-	"uphill":	{"color":Color(1,1,0), "height":1,"mesh": "prism","left_to_right": false}
+	"uphill":	{"color":Color(1,1,0), "height":1,"mesh": "prism","left_to_right": false},
+	"channel":	{"color": Color(0.55, 0.55, 0.58), "height": 0, "mesh": "box"}   # 通道格（桥/坑）专属石板灰
 }
 
 ## 0 高度格子的最小渲染厚度（视觉薄片，逻辑高度仍为 0，不影响寻路/移动）
@@ -27,6 +28,8 @@ func build() -> void:
 func _create_tile(cell: Vector2i, terrain: String) -> void:
 	var visual: Dictionary = TERRAIN_VISUAL.get(terrain, TERRAIN_VISUAL["flat"])
 	var is_channel: bool = grid_data.channel_height.has(cell)
+	if is_channel:
+		visual = TERRAIN_VISUAL["channel"]   # 通道格用专属外观（石板灰），不再用格子自身地形色
 
 	# 通道格子：永远渲染成"顶面 = 记录高度"的平台（与段主地形同高，保证视觉连续）
 	# 非通道 0 高度格子：垫 BASE_THICKNESS 薄底座
