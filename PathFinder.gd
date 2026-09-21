@@ -10,7 +10,7 @@ func _init(grid_dt: GridData, role_dt: String) -> void:
 	role = role_dt
 	
 func setup() -> void:
-	astar.region = Rect2i(0,0,20,12)	#赛道尺寸
+	astar.region = Rect2i(0,0,60,12)	#赛道尺寸
 	astar.cell_size = Vector2(1.0,1.0)	#格子尺寸
 	astar.diagonal_mode =AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
 	astar.update()
@@ -19,7 +19,7 @@ func setup() -> void:
 	
 # 第一步：region 内所有格子默认禁行（空气不能走）
 	for y in range(12):
-		for x in range(20):
+		for x in range(60):
 			astar.set_point_solid(Vector2i(x, y), true)
 
 	# 第二步：只开放赛道格子，按角色灌权重/禁行

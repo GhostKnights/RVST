@@ -1,12 +1,12 @@
 ﻿角色,地形,花費,是否禁行
 role,terrain,cost,solid
-turtle,water,1,0
-turtle,highland,1,1
+turtle,water,0.5,0
+turtle,highland,1,0
 turtle,downhill,0.5,0
 turtle,flat,1,0
 turtle,uphill,1,0
-rabbit,water,1,1
+rabbit,water,1,0
 rabbit,highland,1,0
 rabbit,downhill,0.8,0
-rabbit,flat,1,0
-rabbit,uphill,1,0
+rabbit,flat,0.5,0
+rabbit,uphill,0.8,0

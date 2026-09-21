@@ -3,10 +3,10 @@ extends RefCounted
 
 var grid_board: Dictionary[Vector2i, String] = {}
 var cell_size: float = 1.0
+var SEG_GAP = 2
 
 ## 通道格子的恒定顶面高度（方案 B：通道与所在段主地形同高）
 ## key = 格子坐标，value = 该通道所属段主地形的顶面高度（highland 段 = 1，water 段 = 0）
-## 作用：角色走通道时高度与主地形一致，避免"高地→通道→下坡"跳变悬空
 var channel_height: Dictionary[Vector2i, float] = {}
 
 ## 地形高度剖面：入口高度（前进方向的前边缘）→ 出口高度（后边缘）
@@ -41,19 +41,24 @@ func get_terrain_height(cell: Vector2i) -> float:
 	return height_at(cell, 0.5)
 
 func cell_to_world(cell: Vector2i) -> Vector3:
-	var world_position: Vector3 = Vector3((cell.x+0.5)*cell_size,0,(cell.y+0.5)*cell_size)
+	var col = cell.x
+	var row = cell.y
+	var segment = col / 20
+	var local_x = col % 20
+	var world_x = (19 - local_x) if segment % 2 == 1 else local_x
+	var world_y = row + segment * (5 + SEG_GAP)
+	var world_position: Vector3 = Vector3((world_x+0.5)*cell_size,0,(world_y+0.5)*cell_size)
 	return world_position
-	
+
 func world_to_cell(world_p: Vector3) -> Vector2i:
 	var grid_position: Vector2i = Vector2i(floori(world_p.x/cell_size),floori(world_p.z/cell_size))
-	return grid_position 
-	
+	return grid_position
+
 func set_terrain(cell: Vector2i,terrain: String) ->void:
 	grid_board[cell] = terrain
-	
+
 func get_terrain(cell: Vector2i,default: String = "flat") -> String:
 	return grid_board.get(cell, default)
-	
+
 func erase_terrain(cell: Vector2i) -> void:
 	grid_board.erase(cell)
-	

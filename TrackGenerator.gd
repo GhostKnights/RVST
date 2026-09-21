@@ -4,10 +4,10 @@ extends RefCounted
 ## 地形转移表：当前地形 -> 下一个地形的合法选择池（"根据上下文生成"）
 ## 规则：过渡地形（downhill/uphill）不能延续；平台地形（highland/flat/water）可延续
 const TERRAIN_TRANSITIONS = {
-	"highland": ["highland", "downhill"],
+	"highland": ["highland", "highland", "downhill"],
 	"downhill": ["flat", "water"],
 	"flat": ["flat", "water", "uphill"],
-	"water": ["water", "flat", "uphill"],
+	"water": ["water", "water", "flat", "uphill"],
 	"uphill": ["highland"],
 }
 
@@ -41,7 +41,7 @@ func generate() -> void:
 	var terrains: Array[String] = []
 	var column := 0
 	var terrain := "flat"
-	while column < 20:
+	while column < 60:
 		# 过渡地形只铺 1 格，平台地形铺 2~4 格
 		var seg_len: int
 		if terrain == "downhill" or terrain == "uphill":
@@ -49,7 +49,7 @@ func generate() -> void:
 		else:
 			seg_len = randi_range(2, 4)
 		for i in range(seg_len):
-			if column >= 20:
+			if column >= 60:
 				break
 			terrains.append(terrain)
 			column += 1
@@ -62,7 +62,7 @@ func generate() -> void:
 	var channel_terrain := ""          # 当前段的通道地形（"" = 无通道）
 	var channel_offset := -2           # 通道带起点行偏移（通道 = offset, offset+1）
 
-	for col in range(0, 20):
+	for col in range(0, 60):
 		center_rows.append(current_row)
 		var main_t := terrains[col]
 
@@ -96,7 +96,7 @@ func generate() -> void:
 
 		# ④ 中心行蜿蜒（范围改为 2..9，保证 ±2 不越界）
 		# 错位条件：前后地形高度连续（前一列出口 == 后一列入口），否则正对链接
-		if col < 19:
+		if col < 59:
 			var prev_exit: float = GridData.TERRAIN_PROFILE[terrains[col]]["exit"]
 			var next_entry: float = GridData.TERRAIN_PROFILE[terrains[col + 1]]["entry"]
 			if prev_exit == next_entry:
@@ -107,16 +107,16 @@ func is_reachable() -> bool:
 	check_reachable.clear()
 	current_row = 6 
 	flood_fill(0, current_row)			
-	return check_reachable.has(Vector2i(19,center_rows[19]))
+	return check_reachable.has(Vector2i(59,center_rows[59]))
 	
 func is_reachable_for(role: String) -> bool:
 	check_reachable.clear()
 	current_row = 6 
 	flood_fill(0, current_row, role)			
-	return check_reachable.has(Vector2i(19,center_rows[19]))
+	return check_reachable.has(Vector2i(59,center_rows[59]))
 	
 func generate_valid(roles: Array[String]) -> bool:
-	for attempt in range(100):               # 最多试 100 个种子
+	for attempt in range(1000):               # 最多试 100 个种子
 		generate()
 		var all_ok := true
 		for role in roles:
@@ -131,7 +131,7 @@ func generate_valid(roles: Array[String]) -> bool:
 	
 	
 func flood_fill(col :int, row : int, role : String = "Normal") -> void:
-	if not(col < 0 or col >= 20 or row < 0 or row >= 12):
+	if not(col < 0 or col >= 60 or row < 0 or row >= 12):
 		if grid_data.grid_board.has(Vector2i(col, row-1)) and not check_reachable.has(Vector2i(col, row-1)) and not ConfigManager.is_solid(role, grid_data.get_terrain(Vector2i(col, row-1))):
 			check_reachable.set(Vector2i(col,row-1),true)
 			flood_fill(col, row-1, role)

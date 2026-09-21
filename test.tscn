@@ -4,28 +4,13 @@
 [ext_resource type="PackedScene" uid="uid://dj044w1mol8xn" path="res://UI.tscn" id="2_6uqi0"]
 [ext_resource type="Script" uid="uid://c7vhpk5vni7ev" path="res://TerrainRenderer.gd" id="2_8uh7m"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_6uqi0"]
-font_size = 48
-font_color = Color(1, 0.08627451, 0.015686275, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_legend"]
-content_margin_left = 16.0
-content_margin_top = 6.0
-content_margin_right = 16.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 0.55)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
 [node name="Node3D" type="Node3D" unique_id=1562624692]
 script = ExtResource("1_37kl0")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1978770900]
-transform = Transform3D(0.70710677, 0.4545237, -0.5416717, 0, 0.76603943, 0.6427936, 0.70710677, -0.4545237, 0.5416717, 3.6, 12.5, 11.8)
+transform = Transform3D(0.7071068, 0.4545237, -0.5416717, 0, 0.76603943, 0.6427936, 0.7071068, -0.4545237, 0.5416717, 7.0002203, 15.496193, 15.968315)
 projection = 1
-size = 32.0
+size = 50.0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1672158897]
 transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)
@@ -36,31 +21,3 @@ script = ExtResource("2_8uh7m")
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1380956144]
 
 [node name="UI" parent="CanvasLayer" unique_id=163075882 instance=ExtResource("2_6uqi0")]
-
-[node name="ResultLabel" type="Label" parent="CanvasLayer" unique_id=554629652]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
-label_settings = SubResource("LabelSettings_6uqi0")
-
-[node name="LegendPanel" type="PanelContainer" parent="CanvasLayer" unique_id=698830177]
-visible = false
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 8.0
-offset_bottom = 48.0
-grow_horizontal = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_legend")
-
-[node name="LegendBox" type="HBoxContainer" parent="CanvasLayer/LegendPanel" unique_id=698830178]
-layout_mode = 2
-theme_override_constants/separation = 16
-alignment = 1

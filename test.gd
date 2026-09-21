@@ -4,51 +4,70 @@ var stage :Stage = Stage.SELECTING
 var player_role := ""	#玩家选的角色（乌龟/兔子），结算要用
 var turtle_racer: Racer
 var rabbit_racer: Racer
-var event_timer := 0.0	#累积计时
-var active_event := {}	#进行中的事件（空=无）
-const EVENT_INTERVAL := 2.0 #每隔几秒掷一次骰子
-const EVENT_CHANCE := 0.35 	#触发概率
+# 随机事件（M4 魔改 A）暂不启用：会稀释"选角决定胜负"的因果，后续想做运气元素再启用
+#var event_timer := 0.0	#累积计时
+var select_timer := 10.0	#倒计时选择计时
+#var active_event := {}	#进行中的事件（空=无）
+#const EVENT_INTERVAL := 2.0 #每隔几秒掷一次骰子
+#const EVENT_CHANCE := 0.35 	#触发概率
 
 func _ready() -> void:
 	# 连按钮信号
 	$CanvasLayer/UI/CenterContainer/PanelContainer/VBoxContainer/HBoxContainer/Button_Turtle.pressed.connect(_on_turtle_pressed)
 	$CanvasLayer/UI/CenterContainer/PanelContainer/VBoxContainer/HBoxContainer/Button_Rabbit.pressed.connect(_on_rabbit_pressed)
+	
+
 
 func _process(delta: float) -> void:
-	if stage == Stage.RACING and active_event.is_empty():
-		event_timer += delta
-		if event_timer >= EVENT_INTERVAL and randf() < EVENT_CHANCE:
-			_trigger_event()
-			event_timer = 0.0
+	if stage == Stage.SELECTING:
+		if select_timer >= 0.0:
+			select_timer -= delta
+			$CanvasLayer/UI/TimeLeft.text = str(int(select_timer))
+		else:
+			stage = Stage.RACING
+			$CanvasLayer/UI/TimeLeft.visible = false
+			var num = randi() % 2
+			if num == 0:
+				$CanvasLayer/UI/CenterContainer/PanelContainer/VBoxContainer/HBoxContainer/Button_Turtle.pressed.emit()
+			else:	
+				$CanvasLayer/UI/CenterContainer/PanelContainer/VBoxContainer/HBoxContainer/Button_Rabbit.pressed.emit()
+	# --- 随机事件骰子（M4 魔改 A）暂不启用 ---
+	#if stage == Stage.RACING and active_event.is_empty():
+		#event_timer += delta
+		#if event_timer >= EVENT_INTERVAL and randf() < EVENT_CHANCE:
+			#_trigger_event()
+			#event_timer = 0.0
 			
 	if stage == Stage.RACING and turtle_racer.finished and rabbit_racer.finished:
 		_settle()
 		
-	if not active_event.is_empty():
-		active_event["remain"] -= delta
-		if active_event["remain"] <= 0.0:
-			ConfigManager.clear_cost_override(active_event["role"], active_event["terrain"])
-			active_event = {}
+	# --- 随机事件倒计时（M4 魔改 A）暂不启用 ---
+	#if not active_event.is_empty():
+		#active_event["remain"] -= delta
+		#if active_event["remain"] <= 0.0:
+			#ConfigManager.clear_cost_override(active_event["role"], active_event["terrain"])
+			#active_event = {}
 
-func _trigger_event() -> void:
-	var role := "turtle" if randi() % 2 == 0 else "rabbit"
-	var racer: Racer = turtle_racer if role == "turtle" else rabbit_racer
-
-	# 事件地形只从该角色路径上实际存在的地形里选 → 保证事件一定影响比赛
-	var candidates: Array[String] = []
-	for cell in racer.path:
-		var t: String = racer.grid_data.get_terrain(cell)
-		if not candidates.has(t):
-			candidates.append(t)
-	if candidates.is_empty():
-		return
-	var terrain: String = candidates.pick_random()
-
-	var factor := 0.5 if randi() % 2  == 0 else 2.0	#顺风减半 / 逆风加倍
-	ConfigManager.set_cost_override(role, terrain, ConfigManager.get_cost(role, terrain) * factor)
-	active_event = {"role":role, "terrain": terrain, "remain": 8.0}
-	print(("顺风" if factor < 1.0 else "逆风"), "！", role, "在", terrain, "上", "加速" if factor < 1.0 else "减速")
-	print("当前 need: turtle=", turtle_racer.need, " rabbit=", rabbit_racer.need)
+# 随机事件触发（M4 魔改 A）暂不启用
+#func _trigger_event() -> void:
+	#var role := "turtle" if randi() % 2 == 0 else "rabbit"
+	#var racer: Racer = turtle_racer if role == "turtle" else rabbit_racer
+	#
+	## 事件地形只从该角色路径上实际存在的地形里选 → 保证事件一定影响比赛
+	#var candidates: Array[String] = []
+	#for cell in racer.path:
+		#var t: String = racer.grid_data.get_terrain(cell)
+		#if not candidates.has(t):
+			#candidates.append(t)
+	#if candidates.is_empty():
+		#return
+	#var terrain: String = candidates.pick_random()
+	#
+	#var factor := 0.5 if randi() % 2  == 0 else 2.0	#顺风减半 / 逆风加倍
+	#ConfigManager.set_cost_override(role, terrain, ConfigManager.get_cost(role, terrain) * factor)
+	#active_event = {"role":role, "terrain": terrain, "remain": 8.0}
+	#print(("顺风" if factor < 1.0 else "逆风"), "！", role, "在", terrain, "上", "加速" if factor < 1.0 else "减速")
+	#print("当前 need: turtle=", turtle_racer.need, " rabbit=", rabbit_racer.need)
 
 func _settle() -> void:
 	stage = Stage.FINISHED
@@ -66,8 +85,8 @@ func _settle() -> void:
 		var winner := "turtle" if turtle_racer.finish_time < rabbit_racer.finish_time else "rabbit"
 		msg += "\n你选的角色" + ("获胜！" if winner == player_role else "惜败。")
 
-	$CanvasLayer/ResultLabel.text = msg
-	$CanvasLayer/ResultLabel.visible = true
+	$CanvasLayer/UI/ResultLabel.text = msg
+	$CanvasLayer/UI/ResultLabel.visible = true
 
 func _on_turtle_pressed() -> void:
 	_start_race("turtle")
@@ -76,10 +95,9 @@ func _on_rabbit_pressed() -> void:
 	_start_race("rabbit")
 	
 func _start_race(role: String) -> void:
-	if stage != Stage.SELECTING:
-		return                     # 防重复点击
 	player_role = role
-	$CanvasLayer/UI.visible = false           # 隐藏选角 UI
+	$CanvasLayer/UI/CenterContainer.visible = false           # 隐藏选角 UI
+	$CanvasLayer/UI/TimeLeft.visible = false		#隐藏倒计时
 	stage = Stage.RACING
 	
 	print("=== 代价查询（期望: 1.0 / 100.0 / 100.0 / 1.0 / 0.6 / 0.8）===")
@@ -97,7 +115,7 @@ func _start_race(role: String) -> void:
 	var gd = GridData.new()
 	var gen = TrackGenerator.new()
 	gen.grid_data = gd
-	gen.set_seed(191107)
+	gen.set_seed(1982101)   #测试刺激的1982101
 	if gen.generate_valid(["turtle", "rabbit"]):
 		$TerrainRenderer.grid_data  = gd
 		$TerrainRenderer.build()
@@ -107,8 +125,8 @@ func _start_race(role: String) -> void:
 	pf_turtle.setup()
 	print("[debug] board 格子数 = ", gd.grid_board.size())
 	print("[debug] 起点 solid = ", pf_turtle.astar.is_point_solid(Vector2i(0, 6)))
-	print("[debug] 终点 solid = ", pf_turtle.astar.is_point_solid(Vector2i(19, gen.center_rows[19])))
-	var path_turtle = pf_turtle.find_path(Vector2i(0, 6), Vector2i(19, gen.center_rows[19]))
+	print("[debug] 终点 solid = ", pf_turtle.astar.is_point_solid(Vector2i(59, gen.center_rows[59])))
+	var path_turtle = pf_turtle.find_path(Vector2i(0, 6), Vector2i(59, gen.center_rows[59]))
 	print("乌龟路径格数: ", path_turtle.size())
 	print("乌龟路径格子: ", path_turtle)
 	
@@ -120,7 +138,7 @@ func _start_race(role: String) -> void:
 	
 	var pf_rabbit = PathFinder.new(gd, "rabbit")
 	pf_rabbit.setup()
-	var path_rabbit = pf_rabbit.find_path(Vector2i(0, 6), Vector2i(19, gen.center_rows[19]))
+	var path_rabbit = pf_rabbit.find_path(Vector2i(0, 6), Vector2i(59, gen.center_rows[59]))
 	print("兔子路径格数: ", path_rabbit.size())
 	print("兔子路径格子: ", path_rabbit)
 	
@@ -157,9 +175,11 @@ func _start_race(role: String) -> void:
 	add_child(rabbit_racer)
 	turtle_racer = Racer.new(gd, "turtle", path_turtle)
 	add_child(turtle_racer)
+	
+
 
 func _build_legend() -> void:
-	var box := $CanvasLayer/LegendPanel/LegendBox
+	var box := $CanvasLayer/UI/LegendPanel/LegendBox
 	for child in box.get_children():
 		box.remove_child(child)
 		child.queue_free()
@@ -194,7 +214,7 @@ func _build_legend() -> void:
 			label.text = "%s %s 龟%s 兔%s" % [terrain, h, t_txt, r_txt]
 		entry.add_child(label)
 		box.add_child(entry)
-	$CanvasLayer/LegendPanel.visible = true
+	$CanvasLayer/UI/LegendPanel.visible = true
 
 func print_path_summary(role: String, path: Array[Vector2i], gd: GridData) -> void:
 	var total := 0.0
